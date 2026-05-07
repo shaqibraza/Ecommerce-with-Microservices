@@ -1,27 +1,66 @@
 import { Request, Response } from "express";
-import { prisma, Prisma } from "@repo/db";
+import { Prisma, prisma } from "@repo/db";
 
+// Controller handlers for category REST endpoints.
+// These methods handle category creation, updating, deletion,
+// and retrieval through Prisma.
 
 export const createCategory = async (req: Request, res: Response) => {
     try {
-        const data: Prisma.ProductCreateInput = req.body();
+        // The create payload is taken from the request body.
+        const data: Prisma.CategoryCreateInput = req.body;
 
-        const product = await prisma.product.create({ data });
+        const category = await prisma.category.create({ data });
 
-        res.status(200).json(product);
-
+        return res.status(200).json(category);
     } catch (error: any) {
         console.log(error);
-        return res.status(error.status || 500).json({ message: error.message || "Internal server eroor "})
+        return res.status(error.status || 500).json({ message: error.message || "Internal server error" });
     }
-}
+};
 
+export const updateCategory = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const data: Prisma.CategoryUpdateInput = req.body;
 
-export const updateCategory = async (req: Request, res: Response) => {}
+        // Update an existing category by numeric ID.
+        const updateCategory = await prisma.category.update({
+            where: { id: Number(id) },
+            data,
+        });
 
+        return res.status(200).json(updateCategory);
+    } catch (error: any) {
+        console.log(error);
+        return res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+    }
+};
 
-export const deleteCategory = async (req: Request, res: Response) => {}
+export const deleteCategory = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
 
+        const deleteCategory = await prisma.category.delete({
+            where: { id: Number(id) },
+        });
 
-export const getAllCategories = async (req: Request, res: Response) => {}
+        return res.status(200).json(deleteCategory);
+    } catch (error: any) {
+        console.log(error);
+        return res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+    }
+};
+
+export const getAllCategories = async (req: Request, res: Response) => {
+    try {
+        // Fetch all categories from the database.
+        const categories = await prisma.category.findMany();
+
+        return res.status(200).json(categories);
+    } catch (error: any) {
+        console.log(error);
+        return res.status(error.status || 500).json({ message: error.message || "Internal server error" });
+    }
+};
 
