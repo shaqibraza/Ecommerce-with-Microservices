@@ -3,7 +3,7 @@ import { Order } from "@repo/order-db"
 
 export const orderRoute = async (fastify: FastifyInstance) => {
     fastify.get(
-        "/user-order",
+        "/user-orders",
         async (request, reply) => {
             const orders = await Order.find();
             return reply.send(orders);

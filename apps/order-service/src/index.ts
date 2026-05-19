@@ -1,8 +1,12 @@
 import { connectOrderDB } from "@repo/order-db";
 import Fastify from "fastify";
+import { orderRoute } from "./routes/order";
 
 
 const fastify = Fastify();
+
+
+fastify.register(orderRoute);
 
 
 const start = async () => {
