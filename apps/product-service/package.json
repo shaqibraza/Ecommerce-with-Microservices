@@ -11,9 +11,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@clerk/express": "^2.1.21",
+    "@repo/db": "workspace:*",
     "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "@repo/db": "workspace:*"
+    "express": "^5.2.1"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
