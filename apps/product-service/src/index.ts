@@ -1,9 +1,10 @@
 import 'dotenv/config';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors'
 import productRouter from './routes/product.route';
 import categoryRouter from './routes/category.route';
-import { clerkMiddleware, getAuth } from '@clerk/express'
+import { clerkMiddleware } from '@clerk/express'
+import { shouldBeUser } from './middleware/authMiddleware';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,13 +21,11 @@ app.use("/products", productRouter  );
 app.use("/categories", categoryRouter);
 
 
-app.get("/test", (req, res) => {
-    const auth = getAuth(req)
-    const userId = auth.userId
-    if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-    res.json({ message: "Product Service Authenticated" });
+app.get("/test", shouldBeUser, (req: Request, res: Response) => {
+    res.json({ 
+        message: "Product Service Authenticated" ,
+        userId: req.userId,
+    });
 });
 
 app.listen(PORT, () => {

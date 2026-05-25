@@ -1,14 +1,15 @@
 import { connectOrderDB } from "@repo/order-db";
-import Fastify from "fastify";
+import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import * as Clerk from '@clerk/fastify'
 import { orderRoute } from "./routes/order";
+import { shouldBeUser } from "./middleware/authmiddleware";
 
 
 const fastify = Fastify();
 
 fastify.register(Clerk.clerkPlugin)
 
-fastify.get("/health", (request, reply) => {
+fastify.get("/health", (request: FastifyRequest, reply: FastifyReply) => {
     return reply.status(200).send({
         status: "ok",
         uptime: process.uptime(),
@@ -16,12 +17,11 @@ fastify.get("/health", (request, reply) => {
     });
 });
 
-fastify.get("/test", (request, reply) => {
-    const { userId } = Clerk.getAuth(request);
-    if (!userId) {
-        return reply.status(401).send({ message: "Unauthorized" });
-    }
-    return reply.status(200).send({  message: "Authenticated"});
+fastify.get("/test", { preHandler: shouldBeUser}, (request: FastifyRequest, reply: FastifyReply) => {
+    return reply.status(200).send({  
+        message: "Authenticated",
+        userId: request.userId
+    });
 });
 
 fastify.register(orderRoute);
