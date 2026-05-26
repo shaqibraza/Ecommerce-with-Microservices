@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/nextjs": "^7.4.1",
     "@hookform/resolvers": "^5.2.1",
+    "@repo/types": "workspace:*",
     "lucide-react": "^0.535.0",
     "next": "15.5.18",
     "react": "19.2.6",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/types": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",

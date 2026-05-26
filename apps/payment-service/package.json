@@ -10,11 +10,12 @@
   "dependencies": {
     "@hono/clerk-auth": "^3.1.1",
     "@hono/node-server": "^1.19.14",
-    "hono": "^4.12.15"
+    "hono": "^4.12.15",
+    "stripe": "^22.1.1"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
     "@repo/types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.19.39",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
