@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import Stripe from "stripe";
-import stripe from "../utils/stripe";
-import { producer } from "../utils/kafka";
+import crypto from "crypto";
+import razorpay from "../utils/razorpay.js";
+import { producer } from "../utils/kafka.js";
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
+const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET as string;
 const webhookRoute = new Hono();
 
 webhookRoute.get("/", (c) => {
@@ -14,47 +14,43 @@ webhookRoute.get("/", (c) => {
   });
 });
 
-
-webhookRoute.post("/stripe", async (c) => {
+webhookRoute.post("/razorpay", async (c) => {
   const body = await c.req.text();
-  const sig = c.req.header("stripe-signature");
+  const signature = c.req.header("x-razorpay-signature");
 
-  let event: Stripe.Event;
+  const expectedSignature = crypto
+    .createHmac("sha256", webhookSecret)
+    .update(body)
+    .digest("hex");
 
-  try {
-    event = stripe.webhooks.constructEvent(body, sig!, webhookSecret);
-  } catch (error) {
+  if (expectedSignature !== signature) {
     console.log("Webhook verification failed!");
     return c.json({ error: "Webhook verification failed!" }, 400);
   }
 
-  switch (event.type) {
-    case "checkout.session.completed":
-      const session = event.data.object as Stripe.Checkout.Session;
+  const event = JSON.parse(body);
 
-      const lineItems = await stripe.checkout.sessions.listLineItems(
-        session.id
-      );
-      // TODO: CREATE ORDER
-      producer.send("payment.successful", {
-        value: {
-          userId: session.client_reference_id,
-          email: session.customer_details?.email,
-          amount: session.amount_total,
-          status: session.payment_status === "paid" ? "success" : "failed",
-          products: lineItems.data.map((item) => ({
-            name: item.description,
+  if (event.event === "payment.captured") {
+    const payment = event.payload.payment.entity;
+    const order = await razorpay.orders.fetch(payment.order_id);
+
+    producer.send("payment.successful", {
+      value: {
+        userId: String(order.notes?.userId ?? ""),
+        email: String(order.notes?.email ?? ""),
+        amount: payment.amount,
+        status: "success",
+        products: JSON.parse(String(order.notes?.products ?? "[]")).map(
+          (item: { name: string; quantity: number; price: number }) => ({
+            name: item.name,
             quantity: item.quantity,
-            price: item.price?.unit_amount,
-          })),
-        },
-      });
-
-      break;
-
-    default:
-      break;
+            price: Math.round(item.price * 100),
+          })
+        ),
+      },
+    });
   }
+
   return c.json({ received: true });
 });
 

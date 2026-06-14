@@ -98,13 +98,9 @@ const ProductPage = async ({
             height={25}
             className="rounded-md"
           />
-          <Image
-            src="/stripe.png"
-            alt="stripe"
-            width={50}
-            height={25}
-            className="rounded-md"
-          />
+          <span className="text-xs font-semibold text-gray-700 border border-gray-200 rounded-md px-2 py-1">
+            Razorpay
+          </span>
         </div>
         <p className="text-gray-500 text-xs">
           By clicking Pay Now, you agree to our{" "}
