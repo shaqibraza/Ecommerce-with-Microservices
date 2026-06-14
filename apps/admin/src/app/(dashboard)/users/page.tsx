@@ -16,8 +16,7 @@ const getData = async (): Promise<{ data: User[]; totalCount: number }> => {
     );
     const data = await res.json();
     return data;
-  } catch (err) {
-    console.log(err);
+  } catch {
     return { data: [], totalCount: 0 };
   }
 };

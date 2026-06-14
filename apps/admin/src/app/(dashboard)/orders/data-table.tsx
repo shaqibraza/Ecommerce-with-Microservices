@@ -48,7 +48,6 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log(rowSelection);
   return (
     <div className="rounded-md border">
       {Object.keys(rowSelection).length > 0 && (

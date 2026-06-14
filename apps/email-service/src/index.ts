@@ -37,8 +37,8 @@ const start = async () => {
         },
       },
     ]);
-  } catch (error) {
-    console.log(error);
+  } catch {
+    // Kafka consumer failed to start
   }
 };
 

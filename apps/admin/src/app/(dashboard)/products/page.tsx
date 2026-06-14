@@ -9,8 +9,7 @@ const getData = async (): Promise<ProductsType> => {
     );
     const data = await res.json();
     return data;
-  } catch (error) {
-    console.log(error);
+  } catch {
     return [];
   }
 };

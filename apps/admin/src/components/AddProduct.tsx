@@ -356,8 +356,7 @@ const AddProduct = () => {
                                           [color]: data.secure_url,
                                         });
                                       }
-                                    } catch (error) {
-                                      console.log(error);
+                                    } catch {
                                       toast.error("Upload failed!");
                                     }
                                   }

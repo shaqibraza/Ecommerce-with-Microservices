@@ -46,8 +46,7 @@ sessionRoute.post("/create-order", shouldBeUser, async (c) => {
       currency: order.currency,
       keyId: process.env.RAZORPAY_KEY_ID,
     });
-  } catch (error) {
-    console.log(error);
+  } catch {
     return c.json({ error: "Failed to create payment order" }, 500);
   }
 });
@@ -99,8 +98,7 @@ sessionRoute.post("/verify-payment", shouldBeUser, async (c) => {
       status: "success",
       paymentStatus: payment.status,
     });
-  } catch (error) {
-    console.log(error);
+  } catch {
     return c.json({ error: "Failed to verify payment" }, 500);
   }
 });
@@ -117,8 +115,7 @@ sessionRoute.get("/:order_id", async (c) => {
       status: order.status,
       paymentStatus: payment?.status ?? "pending",
     });
-  } catch (error) {
-    console.log(error);
+  } catch {
     return c.json({ error: "Order not found" }, 404);
   }
 });

@@ -26,7 +26,6 @@ app.get("/health", (req: Request, res: Response) => {
 app.use("/users", shouldBeAdmin, userRoute);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(err);
   return res
     .status(err.status || 500)
     .json({ message: err.message || "Inter Server Error!" });
@@ -35,11 +34,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 const start = async () => {
   try {
     await producer.connect();
-    app.listen(8003, () => {
-      console.log("Auth service is running on 8003");
-    });
-  } catch (error) {
-    console.log(error);
+    app.listen(8003);
+  } catch {
     process.exit(1);
   }
 };

@@ -5,7 +5,6 @@ export const createConsumer = (kafka: Kafka, groupId: string) => {
 
   const connect = async () => {
     await consumer.connect();
-    console.log("Kafka consumer connected:" + groupId);
   };
 
   const subscribe = async (
@@ -30,8 +29,8 @@ export const createConsumer = (kafka: Kafka, groupId: string) => {
               await topicConfig.topicHandler(JSON.parse(value));
             }
           }
-        } catch (error) {
-          console.log("Error processing message", error);
+        } catch {
+          // Message handler failed
         }
       },
     });

@@ -31,7 +31,6 @@ app.use("/products", productRouter);
 app.use("/categories", categoryRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(err);
   return res
     .status(err.status || 500)
     .json({ message: err.message || "Inter Server Error!" });
@@ -40,11 +39,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 const start = async () => {
   try {
     Promise.all([await producer.connect(), await consumer.connect()]);
-    app.listen(8000, () => {
-      console.log("Product service is running on 8000");
-    });
-  } catch (error) {
-    console.log(error);
+    app.listen(8000);
+  } catch {
     process.exit(1);
   }
 };

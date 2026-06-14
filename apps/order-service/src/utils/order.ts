@@ -15,7 +15,6 @@ export const createOrder = async (order: OrderType) => {
       },
     });
 } catch (error) {
-    console.log(error);
     throw error;
   }
 };

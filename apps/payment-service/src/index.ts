@@ -24,17 +24,11 @@ app.route("/webhooks", webhookRoute);
 const start = async () => {
   try {
     await producer.connect();
-    serve(
-      {
-        fetch: app.fetch,
-        port: 8002,
-      },
-      () => {
-        console.log(`Payment service is running on port 8002`);
-      }
-    );
-  } catch (error) {
-    console.log(error);
+    serve({
+      fetch: app.fetch,
+      port: 8002,
+    });
+  } catch {
     process.exit(1);
   }
 };

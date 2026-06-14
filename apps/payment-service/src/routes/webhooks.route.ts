@@ -24,7 +24,6 @@ webhookRoute.post("/razorpay", async (c) => {
     .digest("hex");
 
   if (expectedSignature !== signature) {
-    console.log("Webhook verification failed!");
     return c.json({ error: "Webhook verification failed!" }, 400);
   }
 

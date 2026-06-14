@@ -25,7 +25,6 @@ const OrdersPage = async () => {
     return <div className="">No orders found!</div>;
   }
 
-  console.log(orders);
   return (
     <div className="">
       <h1 className="text-2xl my-4 font-medium">Your Orders</h1>
