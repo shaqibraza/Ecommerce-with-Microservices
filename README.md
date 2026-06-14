@@ -1,4 +1,4 @@
-# Trendlama E-Commerce Platform
+# Trend E-Commerce Platform - With Microservice Architecture
 
 A full-stack, event-driven e-commerce platform built as a **Turborepo monorepo**. It combines microservices for products, orders, payments, and authentication with two Next.js frontends — a customer storefront and an admin dashboard — connected through **Apache Kafka** for asynchronous messaging.
 
