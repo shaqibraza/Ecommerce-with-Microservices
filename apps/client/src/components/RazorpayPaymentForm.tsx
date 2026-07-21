@@ -52,12 +52,30 @@ const RazorpayPaymentForm = ({
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    getToken().then((token) => setToken(token));
-  }, [getToken]);
+    if (!isLoaded) {
+      return;
+    }
+
+    if (!isSignedIn) {
+      setToken(null);
+      setError("Please sign in before making a payment.");
+      return;
+    }
+
+    getToken()
+      .then((token) => {
+        setToken(token);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("Failed to get Clerk token", err);
+        setError("Unable to authenticate payment request. Please sign in again.");
+      });
+  }, [getToken, isLoaded, isSignedIn]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -95,9 +113,17 @@ const RazorpayPaymentForm = ({
       );
 
       const orderData = await orderRes.json();
+      console.log("create-order response", orderRes.status, orderData);
 
       if (!orderRes.ok || orderData.error) {
-        throw new Error(orderData.error ?? "Failed to create payment order");
+        const errorMessage =
+          orderData.error || orderData.message || "Failed to create payment order";
+        throw new Error(errorMessage);
+      }
+
+      const contact = shippingForm.phone.replace(/\D/g, "");
+      if (contact.length !== 10) {
+        throw new Error("Please enter a valid 10-digit phone number.");
       }
 
       const options: RazorpayOptions = {
@@ -110,18 +136,21 @@ const RazorpayPaymentForm = ({
         prefill: {
           name: shippingForm.name,
           email: shippingForm.email,
-          contact: shippingForm.phone,
+          contact,
         },
         handler: async (response) => {
+          const verifyPayload = {
+            ...response,
+            shipping: shippingForm,
+            cart,
+          };
+          console.log("verify-payment payload", verifyPayload);
+
           const verifyRes = await fetch(
             `${process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL}/sessions/verify-payment`,
             {
               method: "POST",
-              body: JSON.stringify({
-                ...response,
-                shipping: shippingForm,
-                cart,
-              }),
+              body: JSON.stringify(verifyPayload),
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
@@ -130,9 +159,12 @@ const RazorpayPaymentForm = ({
           );
 
           const verifyData = await verifyRes.json();
+          console.log("verify-payment response", verifyRes.status, verifyData);
 
           if (!verifyRes.ok || verifyData.error) {
-            setError(verifyData.error ?? "Payment verification failed");
+            const errorMessage =
+              verifyData.error || verifyData.message || "Payment verification failed";
+            setError(errorMessage);
             return;
           }
 
@@ -141,12 +173,15 @@ const RazorpayPaymentForm = ({
         theme: { color: "#1f2937" },
       };
 
+      console.log("Razorpay checkout options", options);
+
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", (response) => {
         setError(response.error.description);
         setLoading(false);
       });
       rzp.open();
+      setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment failed");
     } finally {
