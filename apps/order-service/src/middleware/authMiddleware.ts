@@ -12,12 +12,16 @@ export const shouldBeUser = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { userId } = Clerk.getAuth(request);
-  if (!userId) {
+  const auth = Clerk.getAuth(request);
+  if (!auth.userId) {
+    console.log("[order-service] missing auth on /user-orders", {
+      authorization: request.headers.authorization,
+      authObject: auth,
+    });
     return reply.status(401).send({ message: "You are not logged in!" });
   }
 
-  request.userId = userId;
+  request.userId = auth.userId;
 };
 
 export const shouldBeAdmin = async (

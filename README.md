@@ -37,7 +37,7 @@ A full-stack, event-driven e-commerce platform built as a **Turborepo monorepo**
 ┌────────────────────────────────────────────────────────────┐
 │                     Backend Microservices                   │
 │  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐│
-│  │ Product :8000│ │ Order  :8001 │ │ Payment      :8002 ││
+│  │ Product :8000│ │ Order  :8005 │ │ Payment      :8002 ││
 │  │   Express    │ │   Fastify    │ │   Hono             ││
 │  └──────┬───────┘ └──────┬───────┘ └──────────┬─────────┘│
 │         │                │                     │           │
@@ -127,7 +127,7 @@ ecommerce/
 │   │       ├── routes/               # product.route.ts, category.route.ts
 │   │       └── utils/kafka.ts
 │   │
-│   ├── order-service/          # Order management (port 8001)
+│   ├── order-service/          # Order management (port 8005)
 │   │   └── src/
 │   │       ├── index.ts
 │   │       ├── middleware/authMiddleware.ts
@@ -174,7 +174,7 @@ ecommerce/
 | **client** | Next.js | `3002` | — |
 | **admin** | Next.js | `3003` | — |
 | **product-service** | Express 5 | `8000` | PostgreSQL |
-| **order-service** | Fastify 5 | `8001` | MongoDB |
+| **order-service** | Fastify 5 | `8005` | MongoDB |
 | **payment-service** | Hono | `8002` | Razorpay |
 | **auth-service** | Express 5 | `8003` | Clerk API |
 | **email-service** | — (Kafka consumer) | — | Gmail (OAuth2) |
@@ -255,7 +255,7 @@ All authenticated endpoints require a Clerk session JWT in the `Authorization: B
 
 ---
 
-### Order Service — `http://localhost:8001`
+### Order Service — `http://localhost:8005`
 
 #### Health
 
@@ -601,7 +601,7 @@ GOOGLE_REFRESH_TOKEN=...
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_PRODUCT_SERVICE_URL=http://localhost:8000
-NEXT_PUBLIC_ORDER_SERVICE_URL=http://localhost:8001
+NEXT_PUBLIC_ORDER_SERVICE_URL=http://localhost:8005
 NEXT_PUBLIC_PAYMENT_SERVICE_URL=http://localhost:8002
 ```
 
@@ -612,7 +612,7 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_AUTH_SERVICE_URL=http://localhost:8003
 NEXT_PUBLIC_PRODUCT_SERVICE_URL=http://localhost:8000
-NEXT_PUBLIC_ORDER_SERVICE_URL=http://localhost:8001
+NEXT_PUBLIC_ORDER_SERVICE_URL=http://localhost:8005
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
 ```
 
