@@ -3,7 +3,6 @@ import crypto from "crypto";
 import razorpay from "../utils/razorpay.js";
 import { shouldBeUser } from "../middleware/authMiddleware.js";
 import { CartItemsType, ShippingFormInputs } from "@repo/types";
-import { producer } from "../utils/kafka.js";
 
 const sessionRoute = new Hono();
 
@@ -56,8 +55,6 @@ sessionRoute.post("/verify-payment", shouldBeUser, async (c) => {
     razorpay_order_id,
     razorpay_payment_id,
     razorpay_signature,
-    shipping,
-    cart,
   }: {
     razorpay_order_id: string;
     razorpay_payment_id: string;
@@ -65,7 +62,6 @@ sessionRoute.post("/verify-payment", shouldBeUser, async (c) => {
     shipping: ShippingFormInputs;
     cart: CartItemsType;
   } = await c.req.json();
-  const userId = c.get("userId");
 
   const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
   const expectedSignature = crypto
@@ -79,20 +75,6 @@ sessionRoute.post("/verify-payment", shouldBeUser, async (c) => {
 
   try {
     const payment = await razorpay.payments.fetch(razorpay_payment_id);
-
-    producer.send("payment.successful", {
-      value: {
-        userId,
-        email: shipping.email,
-        amount: payment.amount,
-        status: payment.status === "captured" ? "success" : "failed",
-        products: cart.map((item) => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: Math.round(item.price * 100),
-        })),
-      },
-    });
 
     return c.json({
       status: "success",

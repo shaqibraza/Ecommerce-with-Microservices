@@ -9,7 +9,9 @@ export const orderRoute = async (fastify: FastifyInstance) => {
     "/user-orders",
     { preHandler: shouldBeUser },
     async (request, reply) => {
+      console.log("Logged in user:", request.userId);
       const orders = await Order.find({ userId: request.userId });
+      console.log("Orders found:", orders.length);
       return reply.send(orders);
     }
   );

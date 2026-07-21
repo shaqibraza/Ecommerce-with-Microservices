@@ -3,7 +3,7 @@ import { createOrder } from "./order";
 
 export const runKafkaSubscriptions = async () => {
 
-  consumer.subscribe([
+  await consumer.subscribe([
     {
       topicName: "payment.successful",
       topicHandler: async (message) => {

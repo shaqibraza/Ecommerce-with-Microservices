@@ -29,8 +29,8 @@ export const createConsumer = (kafka: Kafka, groupId: string) => {
               await topicConfig.topicHandler(JSON.parse(value));
             }
           }
-        } catch {
-          // Message handler failed
+        } catch(error) {
+          console.error("Kafka consumer error:", error);
         }
       },
     });

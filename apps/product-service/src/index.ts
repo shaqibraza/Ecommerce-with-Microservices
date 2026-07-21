@@ -40,6 +40,7 @@ const start = async () => {
   try {
     Promise.all([await producer.connect(), await consumer.connect()]);
     app.listen(8000);
+    console.log("Product service is running on port: 8000")
   } catch {
     process.exit(1);
   }

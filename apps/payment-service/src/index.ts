@@ -28,6 +28,7 @@ const start = async () => {
       fetch: app.fetch,
       port: 8002,
     });
+    console.log("Payment service is running on port: 8002")
   } catch {
     process.exit(1);
   }

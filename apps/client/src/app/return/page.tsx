@@ -14,6 +14,7 @@ const ReturnPage = async ({
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL}/sessions/${order_id}`
   );
+  console.log("Res: ", res)
   const data = await res.json();
 
   return (

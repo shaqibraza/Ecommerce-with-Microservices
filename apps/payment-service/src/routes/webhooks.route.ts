@@ -15,6 +15,7 @@ webhookRoute.get("/", (c) => {
 });
 
 webhookRoute.post("/razorpay", async (c) => {
+  console.log("RAZORPAY WEBHOOK RECEIVED");
   const body = await c.req.text();
   const signature = c.req.header("x-razorpay-signature");
 
@@ -33,20 +34,18 @@ webhookRoute.post("/razorpay", async (c) => {
     const payment = event.payload.payment.entity;
     const order = await razorpay.orders.fetch(payment.order_id);
 
-    producer.send("payment.successful", {
-      value: {
-        userId: String(order.notes?.userId ?? ""),
-        email: String(order.notes?.email ?? ""),
-        amount: payment.amount,
-        status: "success",
-        products: JSON.parse(String(order.notes?.products ?? "[]")).map(
-          (item: { name: string; quantity: number; price: number }) => ({
-            name: item.name,
-            quantity: item.quantity,
-            price: Math.round(item.price * 100),
-          })
-        ),
-      },
+    await producer.send("payment.successful", {
+      userId: String(order.notes?.userId ?? ""),
+      email: String(order.notes?.email ?? ""),
+      amount: payment.amount,
+      status: "success",
+      products: JSON.parse(String(order.notes?.products ?? "[]")).map(
+        (item: { name: string; quantity: number; price: number }) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: Math.round(item.price * 100),
+        })
+      ),
     });
   }
 

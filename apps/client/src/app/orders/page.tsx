@@ -13,6 +13,7 @@ const fetchOrders = async () => {
       },
     }
   );
+  console.log("Orders Res: ", res)
 
   const data: OrderType[] = await res.json();
   return data;
@@ -20,6 +21,7 @@ const fetchOrders = async () => {
 
 const OrdersPage = async () => {
   const orders = await fetchOrders();
+  console.log("Orders: ", orders)
 
   if (!orders) {
     return <div className="">No orders found!</div>;
